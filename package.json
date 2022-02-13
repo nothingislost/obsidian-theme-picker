@@ -21,6 +21,7 @@
     "obsidian": "^0.12.0",
     "rollup": "^2.32.1",
     "tslib": "^2.2.0",
+    "@popperjs/core": "^2.11.2",
     "typescript": "4.3.5"
   }
 }

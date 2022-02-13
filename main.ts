@@ -4,6 +4,7 @@ import ThemePickerPluginModal from 'theme-picker-modal';
 export default class ThemePicker extends Plugin {
 	DARK_MODE_THEME_KEY = "obsidian";
 	LIGHT_MODE_THEME_KEY = "moonstone";
+	changeThemeButton: HTMLElement;
 
 	colorSchemeIcon: SVGSVGElement;
 	moonIconSvg = `<path fill="none" d="M0 0h24v24H0z"/><path d="M10 7a7 7 0 0 0 12 4.9v.1c0 5.523-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2h.1A6.979 6.979 0 0 0 10 7zm-6 5a8 8 0 0 0 15.062 3.762A9 9 0 0 1 8.238 4.938 7.999 7.999 0 0 0 4 12z"/>`;
@@ -12,16 +13,20 @@ export default class ThemePicker extends Plugin {
 	async onload() {
 		this.colorSchemeIcon = this.initializeColorSchemeIcon();
 		const themePickerStatusBarItem: HTMLElement = this.addStatusBarItem();
+		themePickerStatusBarItem.addClass("theme-picker")
+		const colorSchemeStatusBarItem: HTMLElement = this.addStatusBarItem();
+		colorSchemeStatusBarItem.addClass("color-scheme-picker");
 
-		const changeThemeButton: HTMLElement = themePickerStatusBarItem.createDiv({
+		this.changeThemeButton = themePickerStatusBarItem.createDiv({
 			cls: "status-bar-item mod-clickable",
-			text: "Change Theme"
+			// @ts-ignore
+			text: this.app.vault.config.cssTheme || "default"
 		});
-		changeThemeButton.addEventListener("click", () => {
-			new ThemePickerPluginModal(this.app).open();
+		this.changeThemeButton.addEventListener("click", () => {
+			new ThemePickerPluginModal(this).open();
 		});
 
-		const changeColorSchemeButton: HTMLElement = themePickerStatusBarItem.createDiv({
+		const changeColorSchemeButton: HTMLElement = colorSchemeStatusBarItem.createDiv({
 			cls: "status-bar-item mod-clickable theme-picker-color-scheme-icon",
 		});
 		changeColorSchemeButton.addEventListener("click", () => this.toggleColorScheme());
@@ -30,7 +35,7 @@ export default class ThemePicker extends Plugin {
 		this.addCommand({
 			id: 'open-theme-picker',
 			name: 'Open Theme Picker',
-			callback: () => new ThemePickerPluginModal(this.app).open()
+			callback: () => new ThemePickerPluginModal(this).open()
 		});
 
 		this.registerEvent(
